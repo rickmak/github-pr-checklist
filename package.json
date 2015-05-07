@@ -1,0 +1,29 @@
+{
+  "name": "github-pr-checklist",
+  "version": "1.0.0",
+  "description": "This script based on",
+  "main": "index.js",
+  "dependencies": {
+    "bl": "~0.9.4",
+    "gith": "^1.0.4",
+    "github": "^0.2.4",
+    "node-uuid": "^1.4.3",
+    "pg": "^4.3.0",
+    "pg-hstore": "^2.3.2",
+    "sequelize": "^2.1.0"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://Steven-Chan@github.com/Steven-Chan/github-pr-checklist.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Steven-Chan/github-pr-checklist/issues"
+  },
+  "homepage": "https://github.com/Steven-Chan/github-pr-checklist"
+}
