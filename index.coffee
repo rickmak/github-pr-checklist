@@ -110,7 +110,11 @@ Sequelize = require 'sequelize'
 SequelizeMigration = require 'sequelize/'
 
 sequelize = () ->
-	_url = process.env.HEROKU_POSTGRESQL_CYAN_URL
+	_url = "postgres://github-pr-checklist@localhost:5432/github-pr-checklist"
+	_ssl = false
+	if process.env.HEROKU_POSTGRESQL_CYAN_URL
+		_url = process.env.HEROKU_POSTGRESQL_CYAN_URL
+		_ssl = true
 	_host = _url.split('@')[1].split(':')[0]
 	_port = _url.split('@')[1].split(':')[1].split('/')[0]
 	new Sequelize _url, {
@@ -120,7 +124,7 @@ sequelize = () ->
 		host:     _host
 		logging:  true #false
 		dialectOptions: { 
-	        ssl: true
+	        ssl: _ssl
 	    }
 	}
 
