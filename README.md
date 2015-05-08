@@ -13,10 +13,10 @@ Usage
 
 
 1. register (with browser)
-	- /api/listenpr?repo={full-repo-name}
-	- example: {host}/api/listenpr?repo=Steven-Chan/github-hook
+  - /api/listenpr?repo={full-repo-name}
+  - example: {host}/api/listenpr?repo=Steven-Chan/github-hook
 2. set appending body
-	- cat {path-to-file} | curl --data-binary @- -X PATCH {host}/api/listenpr?repo={full-repo-name}
+  - cat {path-to-file} | curl --data-binary @- -X PATCH {host}/api/listenpr?repo={full-repo-name}
 3. no 3
 
 
