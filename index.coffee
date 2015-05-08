@@ -1,12 +1,15 @@
 http = require 'http'
+url = require 'url'
 querystring = require 'querystring'
 uuid = require 'node-uuid'
 
 appConfig = require './config'
-hander = require './handler'
 github = require './github'
 db = require './db'
+Client = db.Client
+sequelize = db.sequelize
 
+handler = require './handler'
 
 clients = []
 
@@ -46,8 +49,28 @@ server = http.createServer (req, res) ->
   pathname = parts.pathname
   method = do req.method.toLowerCase
   console.log "visiting (%s) : %s", req.method, req.url
+  if !appConfig.test && pathname.indexOf("test") > -1
+    console.log "Rejected test call on deployment"
+    res.statusCode = 403
+    return res.end 'Rejected test call on deployment'
   if pathname is '/test-oauth'
     github.authorize res
+  else if pathname is '/test/pull_request'
+    matched_client = client for client in clients when client.repo is query.repo
+    console.log matched_client
+    res.end matched_client
+  else if pathname is '/test/see_all_client'
+    Client.findAll({
+        
+      }).then ((clients) ->
+        resbody = ''
+        for cl in clients
+          resbody += 'cl.repo: ' + cl.repo + ',cl.body: ' + cl.body + ',cl.access_token: ' + cl.access_token + '\n'
+        res.end resbody
+      )
+  else if pathname is '/test/reset'
+    Client.destroy({where:{},force:true}).then () ->
+      res.end 'deleted all records'
   else if pathname is '/oauth-callback'
     Client.findOne({
       where: {state: query.state}
@@ -67,22 +90,6 @@ server = http.createServer (req, res) ->
       req_body = ''
       req.on 'data', (ch) -> req_body += ch
       req.on 'end', () -> listen_pullrequest[method] res, query, req_body
-  else if pathname is '/test/pull_request'
-    matched_client = client for client in clients when client.repo is query.repo
-    console.log matched_client
-    res.end matched_client
-  else if pathname is '/test/see_all_client'
-    Client.findAll({
-        
-      }).then ((clients) ->
-        resbody = ''
-        for cl in clients
-          resbody += 'cl.repo: ' + cl.repo + ',cl.body: ' + cl.body + ',cl.access_token: ' + cl.access_token + '\n'
-        res.end resbody
-      )
-  else if pathname is '/test/reset'
-    Client.destroy({where:{},force:true}).then () ->
-      res.end 'deleted all records'
   else
     handler req, res, (err) ->
       res.statusCode = 404
@@ -90,4 +97,4 @@ server = http.createServer (req, res) ->
   
 
 server.listen appConfig.port
-console.log 'server is listening'
+console.log "listening port: #{appConfig.port}"

@@ -1,15 +1,28 @@
 config = {
   name: 'github-pr-checklist'
-  client_id: '74ca93a65bffa081a74d'
-  client_secret: '5e56b44128e1b02c382291baf36cb605a0fe6a02'
-  redirect_uri: 'https://github-pr-checklist.herokuapp.com/oauth-callback'
+  clientID: '74ca93a65bffa081a74d'
+  clientSecret: '5e56b44128e1b02c382291baf36cb605a0fe6a02'
+  redirectUri: 'https://github-pr-checklist.herokuapp.com/oauth-callback',
+  test: true
 }
 
-config['port'] = process.env.PORT || 8080
+if process.env.DEPLOY
+  config.test = false
 
-if process.env.HEROKU_POSTGRESQL_CYAN_URL
+if process.env.GITHUB_CLIENT_ID
+  config.clientID = process.env.GITHUB_CLIENT_ID
+
+if process.env.GITHUB_SECRET
+  config.clientSecret = process.env.GITHUB_SECRET
+
+if process.env.GITHUB_REDIRECT_URI
+  config.redirectUri = process.env.GITHUB_REDIRECT_URI
+
+config.port = process.env.PORT || 8080
+
+if process.env.DATABASE_URL
   config.db = {
-    url: process.env.HEROKU_POSTGRESQL_CYAN_URL,
+    url: process.env.DATABASE_URL,
     ssl: true,
     logging: false
   }

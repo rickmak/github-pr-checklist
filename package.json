@@ -5,7 +5,9 @@
   "main": "index.js",
   "dependencies": {
     "bl": "~0.9.4",
+    "coffee-script": "^1.9.2",
     "github": "^0.2.4",
+    "github-webhook-handler": "^0.4.0",
     "node-uuid": "^1.4.3",
     "pg": "^4.3.0",
     "pg-hstore": "^2.3.2",
@@ -13,6 +15,7 @@
   },
   "devDependencies": {},
   "scripts": {
+    "app": "coffee index.coffee",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {

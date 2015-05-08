@@ -1,4 +1,6 @@
 https = require 'https'
+db = require './db'
+config = require './config'
 
 createHandler = require 'github-webhook-handler'
 handler = createHandler {
@@ -16,7 +18,7 @@ handler.on 'pull_request', (event) ->
   console.log 'Received a pull request on %s', event.payload.repository.full_name
   if event.payload.action is 'opened'
     # matched_client = client for client in clients when client.repo is event.payload.repository.full_name
-    Client.findOne({
+    db.Client.findOne({
       where: {repo: event.payload.repository.full_name}
     }).then((matched_client) ->
       options = {
@@ -24,7 +26,7 @@ handler.on 'pull_request', (event) ->
         path: '/repos/' + matched_client.repo + '/pulls/' + event.payload.number
         method: 'PATCH'
         headers: {
-          'User-Agent': app_config.name
+          'User-Agent': config.name
           'Authorization': 'token ' + matched_client.access_token
         }
       }
