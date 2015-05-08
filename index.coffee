@@ -15,7 +15,7 @@ app_config = {
 }
 
 #github-webhook-handler setup
-createHandler = require './github-webhook-handler.js'
+createHandler = require 'github-webhook-handler'
 handler = createHandler {
 	path: '/github-web-hook'
 	secret: 'oursky'
