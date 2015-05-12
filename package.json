@@ -4,9 +4,7 @@
   "description": "This script based on",
   "main": "index.js",
   "dependencies": {
-    "bl": "~0.9.4",
     "coffee-script": "^1.9.2",
-    "github": "^0.2.4",
     "github-webhook-handler": "^0.4.0",
     "node-uuid": "^1.4.3",
     "pg": "^4.3.0",
