@@ -4,13 +4,15 @@ Client = db.Client
 jade = require 'jade'
 
 
-auth = (req) -> req.queryObj.secret? and req.queryObj.secret is appConfig.appSecret
+adminAuth = (req) -> 
+  console.log "secret: #{req.queryObj.secret}"
+  req.queryObj.secret? and req.queryObj.secret is appConfig.appSecret
 
 routes = []
 
 routes.push
   path: '/admin/checklist'
-  auth: auth
+  auth: adminAuth
   controller: (req, res) ->
     where = {}
     if req.queryObj.repo? then where.repo = req.queryObj.repo
@@ -21,7 +23,7 @@ routes.push
 
 routes.push
   path: '/admin/delete'
-  auth: auth
+  auth: adminAuth
   controller: (req, res) ->
     do (req, res) =>
       where = {}

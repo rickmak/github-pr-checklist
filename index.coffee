@@ -43,10 +43,11 @@ listen_pullrequest = {
         res.end 'updated: ' + params.repo
 }
 
-#http server setup
+#http router setup
 useRoutes = (req, res, routes) ->
   for route in routes
     if not route.auth?
+      console.log "#{route.pathname} does not require auth"
       route.auth = true
     if req.pathname is route.path and (route.auth or route.auth req)
       route.controller req, res
@@ -63,7 +64,7 @@ route = (req, res, router) ->
     res.statusCode = 404
     res.end 'no such location'
 
-
+#http server setup
 redirect_uri = url.parse(appConfig.redirectUri, true).pathname
 server = http.createServer (req, res) ->
   parts = url.parse req.url, true
