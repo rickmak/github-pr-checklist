@@ -44,60 +44,69 @@ listen_pullrequest = {
 }
 
 #http server setup
+useRoutes = (req, res, routes) ->
+  for route in routes
+    if not route.auth?
+      route.auth = true
+    if req.pathname is route.path and (route.auth or route.auth req)
+      route.controller req, res
+      return true
+  return false
+
+route = (req, res, router) ->
+  routeFound = false
+  for routes in router
+    if useRoutes req, res, routes
+      routeFound = true
+      break
+  if not routeFound
+    res.statusCode = 404
+    res.end 'no such location'
+
+
+redirect_uri = url.parse(appConfig.redirectUri, true).pathname
 server = http.createServer (req, res) ->
   parts = url.parse req.url, true
   query = parts.query
-  pathname = parts.pathname
-  method = do req.method.toLowerCase
+  req.queryObj = query
+  req.pathname = parts.pathname
+
   console.log "visiting (%s) : %s", req.method, req.url
-  if !appConfig.test && pathname.indexOf("test") > -1
-    console.log "Rejected test call on deployment"
-    res.statusCode = 403
-    return res.end 'Rejected test call on deployment'
-  if pathname is '/test-oauth'
-    github.authorize res
-  else if pathname is '/test/pull_request'
-    matched_client = client for client in clients when client.repo is query.repo
-    console.log matched_client
-    res.end matched_client
-  else if pathname is '/test/checklist'
-    where = {}
-    if query.repo?
-      where.repo = query.repo
-    Client.findAll({where:where}).then ((clients) ->
-        # resbody = ''
-        # for cl in clients
-        #   resbody += 'cl.repo: ' + cl.repo + ',cl.body: ' + cl.body + ',cl.access_token: ' + cl.access_token + '\n'
-        # res.end resbody
-        res.end jade.renderFile 'views/prlist.jade', 
-          registered: clients
+
+  router = []
+
+  router.push require './admin-router'
+
+  apiRoutes = []
+  apiRoutes.push
+    path: redirect_uri
+    controller: (req, res) ->
+      Client.findOne({
+        where: {state: req.queryObj.state}
+      }).then((client) ->
+        github.request_token req.queryObj.code, (token_body) ->
+          token_obj = querystring.parse token_body
+          client.update({
+            access_token: token_obj.access_token
+          }).then(() ->
+            res.end 'registered for repo: ' + client.repo
+          )
       )
-  else if pathname is '/test/reset'
-    Client.destroy({where:{},force:true}).then () ->
-      res.end 'deleted all records'
-  else if pathname is '/oauth-callback'
-    Client.findOne({
-      where: {state: query.state}
-    }).then((client) ->
-      github.request_token query.code, (token_body) ->
-        token_obj = querystring.parse token_body
-        client.update({
-          access_token: token_obj.access_token
-        }).then(() ->
-          res.end 'registered for repo: ' + client.repo
-        )
-    )
-  else if pathname is '/api/listenpr'
-    if method is 'get' 
-      listen_pullrequest[method] res, query, req.body
-    else
-      req_body = ''
-      req.on 'data', (ch) -> req_body += ch
-      req.on 'end', () -> listen_pullrequest[method] res, query, req_body
-  else
-    handler req, res, (err) ->
-      res.statusCode = 404
-      res.end 'no such location'
+
+  apiRoutes.push
+    path: '/api/listenpr'
+    controller: (req, res) ->
+      method = do req.method.toLowerCase
+      if method is 'get' 
+        listen_pullrequest[method] res, req.queryObj, req.body
+      else
+        req_body = ''
+        req.on 'data', (ch) -> req_body += ch
+        req.on 'end', () -> listen_pullrequest[method] res, req.queryObj, req_body
+
+  router.push apiRoutes
+
+  route req, res, router
   
 
 server.listen appConfig.port
