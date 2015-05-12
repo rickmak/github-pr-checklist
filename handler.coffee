@@ -4,8 +4,8 @@ config = require './config'
 
 createHandler = require 'github-webhook-handler'
 handler = createHandler {
-  path: '/github-web-hook'
-  secret: 'oursky'
+  path: config.webhook.path
+  secret: config.webhook.secret
 }
 
 handler.on 'error', (err) ->

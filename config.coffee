@@ -2,7 +2,10 @@ config = {
   name: 'github-pr-checklist'
   clientID: '74ca93a65bffa081a74d'
   clientSecret: '5e56b44128e1b02c382291baf36cb605a0fe6a02'
-  redirectUri: 'https://github-pr-checklist.herokuapp.com/oauth-callback',
+  redirectUri: 'https://github-pr-checklist.herokuapp.com/oauth-callback'
+  webhook: 
+    path: '/github-web-hook'
+    secret: 'oursky'
   test: true
 }
 
@@ -17,6 +20,12 @@ if process.env.GITHUB_SECRET
 
 if process.env.GITHUB_REDIRECT_URI
   config.redirectUri = process.env.GITHUB_REDIRECT_URI
+
+if process.env.GITHUB_WEBHOOK_PATH
+  config.webhook.path = process.env.GITHUB_WEBHOOK_PATH
+
+if process.env.GITHUB_WEBHOOK_SECRET
+  config.webhook.secret = process.env.GITHUB_WEBHOOK_SECRET
 
 config.port = process.env.PORT || 8080
 
