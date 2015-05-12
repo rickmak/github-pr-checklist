@@ -23,10 +23,14 @@ routes.push
   path: '/admin/delete'
   auth: auth
   controller: (req, res) ->
-    where = {}
-    if req.queryObj.repo? then where.repo = req.queryObj.repo
-    Client.destroy({where:where,force:true}).then () ->
-      res.end 'deleted all records'
+    do (req, res) =>
+      where = {}
+      if req.queryObj.repo? then where.repo = req.queryObj.repo
+      Client.destroy({where:where,force:true}).then () ->
+        if req.queryObj.repo? 
+          res.end "deleted #{req.queryObj.repo}"
+        else
+          res.end 'deleted all records'
 
 
 module.exports = routes
