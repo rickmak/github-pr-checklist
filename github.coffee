@@ -1,11 +1,18 @@
 https = require 'https'
+querystring = require 'querystring'
 
 config = require './config'
 
 #github api
 authorize = (res, state) ->
   res.writeHead 302, {
-    Location: 'https://github.com/login/oauth/authorize?client_id=' + config.clientID + '&redirect_uri=' + config.redirectUri + '&scope=repo&state=' + state
+    Location: "https://github.com/login/oauth/authorize?#{
+        querystring.stringify 
+          client_id: config.clientID
+          redirect_uri: config.redirectUri
+          scope: 'repo'
+          state: state
+      }"
   }
   do res.end
 
@@ -28,7 +35,10 @@ request_token = (code, callback) ->
       callback body
   token_req.on 'error', (err) ->
     console.log 'problem with request: ', e.message
-  token_req.write 'client_id=' + config.clientID + '&client_secret=' + config.clientSecret  + '&code=' + code
+  token_req.write querystring.stringify 
+    client_id: config.clientID
+    client_secret: config.clientSecret
+    code: code
   do token_req.end
 
 
