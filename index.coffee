@@ -64,8 +64,9 @@ route = (req, res, router) ->
       routeFound = true
       break
   if not routeFound
-    res.statusCode = 404
-    res.end 'no such location'
+    handler req, res, (err) ->
+      res.statusCode = 404
+      res.end 'no such location'
 
 #http server setup
 redirect_uri = url.parse(appConfig.redirectUri, true).pathname
