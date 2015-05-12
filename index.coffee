@@ -44,14 +44,17 @@ listen_pullrequest = {
 }
 
 #http router setup
+resolve = (target, expectedType, args) -> if typeof target is expectedType then target else target args
+
 useRoutes = (req, res, routes) ->
   for route in routes
     if not route.auth?
-      console.log "#{route.pathname} does not require auth"
       route.auth = true
-    if req.pathname is route.path and (route.auth or route.auth req)
-      route.controller req, res
-      return true
+
+    if req.pathname is route.path
+      if resolve route.auth, 'boolean', req
+        route.controller req, res
+        return true
   return false
 
 route = (req, res, router) ->
