@@ -2,6 +2,7 @@ http = require 'http'
 url = require 'url'
 querystring = require 'querystring'
 uuid = require 'node-uuid'
+jade = require 'jade'
 
 appConfig = require './config'
 github = require './github'
@@ -63,10 +64,12 @@ server = http.createServer (req, res) ->
     Client.findAll({
         
       }).then ((clients) ->
-        resbody = ''
-        for cl in clients
-          resbody += 'cl.repo: ' + cl.repo + ',cl.body: ' + cl.body + ',cl.access_token: ' + cl.access_token + '\n'
-        res.end resbody
+        # resbody = ''
+        # for cl in clients
+        #   resbody += 'cl.repo: ' + cl.repo + ',cl.body: ' + cl.body + ',cl.access_token: ' + cl.access_token + '\n'
+        # res.end resbody
+        res.end jade.renderFile 'views/prlist.jade', 
+          registered: clients
       )
   else if pathname is '/test/reset'
     Client.destroy({where:{},force:true}).then () ->
