@@ -60,10 +60,11 @@ server = http.createServer (req, res) ->
     matched_client = client for client in clients when client.repo is query.repo
     console.log matched_client
     res.end matched_client
-  else if pathname is '/test/see_all_client'
-    Client.findAll({
-        
-      }).then ((clients) ->
+  else if pathname is '/test/checklist'
+    where = {}
+    if query.repo?
+      where.repo = query.repo
+    Client.findAll({where:where}).then ((clients) ->
         # resbody = ''
         # for cl in clients
         #   resbody += 'cl.repo: ' + cl.repo + ',cl.body: ' + cl.body + ',cl.access_token: ' + cl.access_token + '\n'
