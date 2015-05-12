@@ -1,6 +1,4 @@
-pg = require 'pg'
 Sequelize = require 'sequelize'
-SequelizeMigration = require 'sequelize/'
 config = require('./config').db
 
 sequelize = () ->
