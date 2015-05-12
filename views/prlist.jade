@@ -1,12 +1,12 @@
 doctype html
 html
-	head
-		link(rel="stylesheet", href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/css/bootstrap.min.css")
-	body
-		.container
-			.row
-				.col-sm-2 repo
-				.col-sm-10 checklist
-				each node in registered
-					.col-sm-2 #{node.repo}
-					textarea.col-sm-10(disabled, style="resize:vertical") #{node.body}
+  head
+    link(rel="stylesheet", href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/css/bootstrap.min.css")
+  body
+    .container
+      .row
+        .col-sm-2 repo
+        .col-sm-10 checklist
+        each node in registered
+          .col-sm-2 #{node.repo}
+          textarea.col-sm-10(disabled, style="resize:vertical") #{node.body}
