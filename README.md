@@ -1,3 +1,7 @@
+# Deprecated
+
+Checkout native feature: https://docs.github.com/en/communities/using-templates-to-encourage-useful-issues-and-pull-requests/creating-a-pull-request-template-for-your-repository
+
 #### Setup
 
 1. Deploy to heroku
